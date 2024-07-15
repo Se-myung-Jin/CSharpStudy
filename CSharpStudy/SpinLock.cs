@@ -33,5 +33,18 @@ namespace CSharpStudy
                     break;
             }
         }
+
+        public void AcquireV3()
+        {
+            while (true)
+            {
+                if (Interlocked.CompareExchange(ref locked, 1, 0) == 0)
+                    break;
+
+                Thread.Sleep(1); // 무조건 휴식
+                Thread.Sleep(0); // 조건부 양보 => 우선순위가 높은 스레드에게 양보
+                Thread.Yield(); //  관대한 양보 => 현재 실행할 수 있는 스레드가 존재하면 양보
+            }
+        }
     }
 }
