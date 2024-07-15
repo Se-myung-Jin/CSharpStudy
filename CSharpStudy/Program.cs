@@ -2,8 +2,8 @@
 {
     class Program
     {
-        static int num = 0;
-        static SpinLock spinLock = new SpinLock();
+        static volatile int num = 0;
+        static RecursiveRWLock rwLock = new RecursiveRWLock();
 
         static void Main(string[] args)
         {
@@ -20,21 +20,21 @@
 
         static void Task1()
         {
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 1000000; i++)
             {
-                spinLock.AcquireV2();
+                rwLock.WriteLock();
                 num++;
-                spinLock.Release();
+                rwLock.WriteUnlock();
             }
         }
 
         static void Task2()
         {
-            for (int j = 0; j < 100000; j++)
+            for (int j = 0; j < 1000000; j++)
             {
-                spinLock.AcquireV2();
+                rwLock.WriteLock();
                 num--;
-                spinLock.Release();
+                rwLock.WriteUnlock();
             }
         }
     }
