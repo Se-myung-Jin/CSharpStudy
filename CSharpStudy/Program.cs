@@ -4,6 +4,7 @@
     {
         static volatile int num = 0;
         static RecursiveRWLock rwLock = new RecursiveRWLock();
+        static SpinLock sLock = new SpinLock();
 
         static void Main(string[] args)
         {
@@ -16,15 +17,24 @@
             Task.WaitAll(task1, task2);
 
             Console.WriteLine($"num : {num}");
+
+            int[] array = new int[] { 5, 3, 8, 4, 9, 1, 6, 2, 7 };
+
+            Sort.MergeSort(array, 0, 8);
+
+            foreach (var i in array)
+            {
+                Console.WriteLine(i);
+            }
         }
 
         static void Task1()
         {
             for (int i = 0; i < 1000000; i++)
             {
-                rwLock.WriteLock();
+                sLock.Acquire();
                 num++;
-                rwLock.WriteUnlock();
+                sLock.Release();
             }
         }
 
@@ -32,9 +42,9 @@
         {
             for (int j = 0; j < 1000000; j++)
             {
-                rwLock.WriteLock();
+                sLock.Acquire();
                 num--;
-                rwLock.WriteUnlock();
+                sLock.Release();
             }
         }
     }
